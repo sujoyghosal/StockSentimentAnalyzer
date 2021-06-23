@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+    <title>Sentiment Analyser App</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/0bfdbb1f27.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="https://kit.fontawesome.com/a5d6ac075f.js" crossorigin="anonymous"></script>
+    <script src="/js/controllers.js"></script>
+    <link rel="stylesheet" href="/sass/default.scss" />
+    <style>
+        table, th, td {
+          border: 1px solid grey;
+        }
+
+ 
+ .innerG {
+     height: 12px;
+     background-color: darkgreen;
+ }
+ .innerR {
+     height: 12px;
+     background-color: red;
+ }
+ .inner {
+     height: 12px;
+     background-color: navy;
+ } 
+ .outer {
+     border: 1px solid white;
+ }
+ 
+        </style>
+</head>
+
+
+<body font-family=calibri>
+    <div ng-app="myApp" ng-controller="myCtrl" style="align-content: center; width:90%; margin:40px auto;">
+        <div style="align-content: center; margin:0px auto;" >
+            <div class="row">
+                <div class="col-sm-5"><h2>Stock Sentiment Analyzer</h2></div>
+                <div class="col-sm-7"> 
+                    <i class="far fa-laugh-beam fa-4x" style="color:darkgreen"></i>
+                    <i class="far fa-grin fa-4x" style="color:green"></i>
+                    <i class="far fa-meh fa-4x" style="color:blue"></i>
+                    <i class="far fa-frown fa-4x" style="color:deeppink"></i>
+                    <i class="far fa-sad-cry fa-4x" style="color:red"></i>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <br><h4>Stock Name: </h4>
+                    <input type="text" class="form-control"  font-family=calibri  ng-model="text"/>
+                    <br>
+                    <div class="container">
+                        <button type="button" class="btn btn-info" ng-click="AnalyseStock(text);tone=true;chattone=false;">Analyze Stock</button>
+                        <button type=" button " class="btn btn-info " ng-click="text='' ;resultsReady=false; ">Clear</button>
+                    </div>
+                </div>
+            </div>
+            <div align=center ng-show="loading ">
+                <i class="fa fa-refresh fa-spin fa-2x fa-fw "></i>
+                <span class="sr-only ">Loading...</span>
+            </div>
+        </div>
+        <br>
+        <!--<div class="row" ng-init="GetAvgScore()" ng-show="showResult">
+            <div class="col-sm-7" ><h4> Average Sentiment: {{avg | number:4}}</h4></div>
+            <div class="col-sm-5" ng-show="avg < 0"> 
+                <i class="far fa-frown fa-4x" style="color:red"></i>
+            </div>
+            <div class="col-sm-5" ng-show="avg > 0"> 
+                <i class="far fa-grin fa-5x" style="color:darkgreen"></i>
+            </div>
+        </div>-->
+        <div class="row" ng-init="GetAvgScore()" ng-show="showResult" style="align-content: center;">
+            <div class="col-sm-4" ><h4>Overall Sentiment: {{avg | number:4}}</h4>
+            </div>
+            <div class="col-sm-2">
+                <i ng-show="avg <= 0.02 && avg > -0.02" class="far fa-meh fa-3x" style="color:blue"></i>
+                <i ng-show="avg <= -0.02 && avg > -0.2" class="far fa-frown fa-3x" style="color:rgb(233, 6, 101)"></i>
+                <i ng-show="avg <= -0.2" class="far fa-sad-cr fa-3x" style="color:red"></i>
+                <i ng-show="avg > 0.02 && avg <= 0.2" class="far fa-grin fa-3x" style="color:green"></i>
+                <i ng-show="avg > 0.2" class="far fa-laugh-beam fa-3x" style="color:darkgreen"></i>
+            </div>
+            <div class="col-sm-6"></div>
+        </div>
+        <div ng-show="error">
+            {{errorMsg}} <i class="far fa-frown fa-2x"></i>
+        </div> 
+        <div>
+            <table class="table-sm table-hover" ng-show="showResult">
+                <tbody>
+                    <tr>
+                        <th>News Headline</th>
+                        <th>Score</th> 
+                        <th>Magnitude</th>
+                        <th>Sentiment</th>
+                    </tr>
+                    <tr ng-repeat="row in response" style="font-size:11px;">
+                        <td width="45%" style="margin: 5pt;">{{row.text[0]}}</td>
+                        <td width="20%">
+                            <div ng-init="sp=GetAbsolute(row.score)" class="outer">
+                                <p>
+                                    <div ng-class="GetClass(row.score)" ng-style="{ width: sp + '%'} "></div>{{row.score | number:9}}
+                                </p>
+                            </div>
+                            <!--<div ng-init="mp=GetAbsolute(row.magnitude)" class="outer">
+                                <p>
+                                    <div class="inner" ng-style="{ width: mp + '%'} "></div>{{row.magnitude | number:9}}
+                                </p>
+                            </div>-->
+                        </td>
+                        <td width="20%">
+                            <div ng-init="mp=GetAbsolute(row.magnitude)" class="outer">
+                                <p>
+                                    <div class="inner" ng-style="{ width: mp + '%'} "></div>{{row.magnitude | number:9}}
+                                </p>
+                            </div>
+                        </td>
+                        <td width="15%">
+                            <!--<img ng-src="{{smiley}}">-->
+                            <div align="center" ng-show="smile">
+                                <i class="far fa-grin fa-2x" style="color:green"></i>
+                            </div>
+                            <div align="center" ng-show="bigsmile">
+                                <i class="far fa-laugh-beam fa-2x" style="color:green"></i>
+                            </div>
+                            <div align="center" ng-show="neutral">
+                                <i class="far fa-meh fa-2x" style="color:blue"></i>
+                            </div>
+                            <div align="center" ng-show="frown" style="color:red">
+                                <i class="far fa-frown fa-2x"></i>
+                            </div>
+                            <div align="center" ng-show="cry">
+                                <i class="far fa-sad-cry fa-2x" style="color:red"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+
+<script>
+    angular.element(document).ready(function() {
+        angular.bootstrap(document, ['myApp']);
+    });
+</script>
+
+</html>

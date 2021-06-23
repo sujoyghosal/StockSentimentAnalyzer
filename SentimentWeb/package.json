@@ -1,0 +1,48 @@
+{
+    "name": "StockSentimentAnalyserWeb",
+    "license": "Apache-2.0",
+    "author": "Google Inc.",
+    "engines": {
+        "node": ">=8"
+    },
+    "repository": "googleapis/nodejs-language",
+    "private": true,
+    "files": [
+        "*.js",
+        "resources"
+    ],
+    "scripts": {
+        "test": "mocha --timeout 60000",
+        "start": "node app.js"
+    },
+    "dependencies": {
+        "@google-cloud/automl": "^2.0.0",
+        "@google-cloud/language": "^4.2.4",
+        "@google-cloud/storage": "^5.8.5",
+        "cors": "^2.8.5",
+        "body-parser": "^1.19.0",
+        "bower": "^1.8.8",
+        "ejs": "^2.6.2",
+        "express": "^4.17.1",
+        "request": "^2.88.0"
+    },
+    "devDependencies": {
+        "chai": "^3.4.0",
+        "grunt": "^1.0.4",
+        "grunt-available-tasks": "^0.6.2",
+        "grunt-bower-installer": "^0.3.6",
+        "grunt-contrib-clean": "^1.0.0",
+        "grunt-contrib-copy": "^1.0.0",
+        "grunt-contrib-jshint": "^1.0.0",
+        "grunt-istanbul": "^0.7.0",
+        "grunt-mocha-test": "^0.12.7",
+        "grunt-sass": "^3.0.2",
+        "mocha": "^7.1.2",
+        "node-sass": "^4.12.0",
+        "rewire": "^2.3.4",
+        "saucelabs": "^1.0.1",
+        "selenium-webdriver": "^3.6.0",
+        "sinon": "^1.17.7",
+        "supertest": "^4.0.2"
+    }
+}
