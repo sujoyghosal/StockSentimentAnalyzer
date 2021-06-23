@@ -29,8 +29,8 @@ app.controller('myCtrl', function($scope, $http ) {
         $scope.res = '';
         var avgScore = 0.0;
         var count = 0;
-        //var url = "http://localhost:8080/getsentiments?text=" + content;
         var url = "https://news-headline-sentiment.el.r.appspot.com/getsentiments?text=" + content + " stock";
+        var url = "https://news-sentiment-api-yr6ldemxra-as.a.run.app/getsentiments?text=" + content + " stock";
         $http({
             method: "GET", url: url }).then(function mySucces(response) { 
             $scope.response = response.data;
@@ -115,6 +115,61 @@ app.controller('myCtrl', function($scope, $http ) {
                 $scope.frown=true;
             }
             return "innerR"
+        }
+    }
+
+    $scope.GetEmoji = function(score){
+        var c = parseFloat(score); 
+        $scope.bigsmile=false;
+        $scope.smile=false;
+        $scope.neutral=false;
+        $scope.frown=false;
+        $scope.cry=false;
+        if(c > 0){
+            if(c > 0.5){
+                $scope.bigsmile=true;
+                return "far fa-laugh-beam fa-2x"
+            }
+            else{
+                $scope.smile=true;
+                return "far fa-grin fa-2x"
+            }
+        }
+        else{
+            if(c < -0.5){
+                $scope.cry=true;
+                return "far fa-sad-cry fa-2x"
+            }
+            else if (c == 0){
+                $scope.neutral=true;
+                return "far fa-meh fa-2x"
+            }
+            else{
+                $scope.frown=true;
+                return "far fa-frown fa-2x"
+            }
+        }
+    }
+    $scope.GetColor = function(score){
+        var c = parseFloat(score); 
+        if(c > 0){
+            if(c > 0.5){
+                return "color:darkgreen"
+            }
+            else{
+                return "color:green"
+            }
+        }
+        else{
+            if(c < -0.5){
+                return "color:darkred"
+            }
+            else if (c == 0){
+                return "color:blue"
+            }
+            else{
+                return "color:red"
+            }
         }
     }
 
